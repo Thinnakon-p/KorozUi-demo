@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
@@ -13,14 +12,74 @@
             background-color: #121212;
             color: #f0f0f0;
         }
-        /* Other styles remain unchanged */
+        /* Fade-in animation */
+        .fade-in {
+            opacity: 0;
+            animation-fill-mode: forwards;
+            animation-name: fadeIn;
+            animation-duration: 1s;
+        }
+        .delay-1 {
+            animation-delay: 0.3s;
+        }
+        .delay-2 {
+            animation-delay: 0.6s;
+        }
+        .delay-3 {
+            animation-delay: 0.9s;
+        }
+        .delay-4 {
+            animation-delay: 1.2s;
+        }
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+        /* Typing effect */
+        .typing > span {
+            border-right: 2px solid #b91c1c;
+            white-space: nowrap;
+            overflow: hidden;
+            display: inline-block;
+            animation: typing 3s steps(10) infinite alternate, blink 0.75s step-end infinite;
+            color: #b91c1c;
+            font-weight: 900;
+        }
+        @keyframes typing {
+            from {
+                width: 0;
+            }
+            to {
+                width: 100%;
+            }
+        }
+        @keyframes blink {
+            50% {
+                border-color: transparent;
+            }
+        }
+        /* Icon bounce */
+        .icon-bounce {
+            display: inline-block;
+            color: #f87171;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+        .icon-bounce:hover {
+            color: #b91c1c;
+            transform: translateY(-6px);
+        }
+        /* Modal styles */
+        .modal-bg {
+            background-color: rgba(18, 18, 18, 0.95);
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
     <!-- Navbar -->
-    <nav class="fixed w-full z-30 top-0 left-0">
+    <nav class="fixed w-full z-30 top-0 left-0 bg-black bg-opacity-80 backdrop-blur-sm">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <a class="text-2xl font-bold fade-in delay-1" href="#">Introduction</a>
+            <a class="text-2xl font-bold fade-in delay-1 text-red-700 hover:text-red-500 transition" href="#">Introduction</a>
             <ul class="flex space-x-6 font-medium fade-in delay-2">
                 <li>
                     <a class="hover:text-red-500 transition" href="#about">About Me</a>
@@ -34,9 +93,11 @@
     <main class="flex-grow pt-24 max-w-7xl mx-auto px-6">
         <!-- About Section -->
         <section class="flex flex-col md:flex-row items-center justify-center gap-10 md:gap-20 py-16" id="about">
-            <img alt="Modern style profile picture of the user with dark red tone and soft red glowing light around" class="rounded-full w-48 h-48 md:w-72 md:h-72 object-cover fade-in delay-3" height="300" src="unnamed.png" width="300"/>
+            <img alt="Modern style profile picture of the user with dark red tone and soft red glowing light around" class="rounded-full w-48 h-48 md:w-72 md:h-72 object-cover fade-in delay-3" height="300" src="https://placehold.co/300x300/dc2626/ffffff/png?text=Profile+Picture" width="300"/>
             <div class="flex flex-col space-y-4 max-w-xl fade-in delay-4">
-                <h1 class="text-4xl font-extrabold">Hello! My name is <span class="typing"><span>Somchai</span></span></h1>
+                <h1 class="text-4xl font-extrabold">
+                    Hello! My name is <span class="typing"><span>Somchai</span></span>
+                </h1>
                 <p class="text-lg leading-relaxed">I am a web developer passionate about creating beautiful and user-friendly projects. Experienced with modern technologies like Tailwind CSS, JavaScript, and React to build websites that meet user needs.</p>
             </div>
         </section>
@@ -64,26 +125,167 @@
             <p class="mt-8 text-lg">Or send me an email at <a class="hover:underline" href="mailto:somchai@example.com">somchai@example.com</a></p>
         </section>
     </main>
+
+    <!-- Modal -->
+    <div id="modal" class="fixed inset-0 hidden items-center justify-center z-50">
+        <div id="modalOverlay" class="absolute inset-0 modal-bg"></div>
+        <div class="relative bg-gray-900 rounded-lg max-w-3xl w-full mx-4 p-6 shadow-lg overflow-auto max-h-[90vh]">
+            <button id="modalClose" aria-label="Close modal" class="absolute top-3 right-3 text-red-600 hover:text-red-400 text-2xl font-bold">&times;</button>
+            <img id="modalImage" alt="Full size post image" class="w-full h-auto rounded mb-4 object-contain"/>
+            <h3 id="modalTitle" class="text-2xl font-bold mb-2 text-red-600"></h3>
+            <p id="modalDescription" class="mb-4 text-gray-300"></p>
+            <a id="modalDownload" href="#" target="_blank" class="bg-red-600 hover:bg-red-700 text-white p-3 rounded inline-block transition">Download</a>
+        </div>
+    </div>
+
     <script>
+        // Sample posts data for demonstration
+        if (!localStorage.getItem('posts')) {
+            const samplePosts = [
+                {
+                    title: "Red Dark Theme UI Kit",
+                    description: "A sleek UI kit with dark red accents for modern web apps.",
+                    image: "https://placehold.co/600x400/dc2626/ffffff/png?text=Red+Dark+Theme+UI+Kit",
+                    link: "https://example.com/download/ui-kit"
+                },
+                {
+                    title: "Portfolio Template",
+                    description: "A responsive portfolio template with dark red highlights.",
+                    image: "https://placehold.co/600x400/7f1d1d/ffffff/png?text=Portfolio+Template",
+                    link: "https://example.com/download/portfolio-template"
+                },
+                {
+                    title: "Dark Red Blog Layout",
+                    description: "A blog layout designed with dark red and black colors.",
+                    image: "https://placehold.co/600x400/991b1b/ffffff/png?text=Dark+Red+Blog+Layout",
+                    link: "https://example.com/download/blog-layout"
+                },
+                {
+                    title: "E-commerce Dashboard",
+                    description: "Dashboard UI with dark red theme for e-commerce platforms.",
+                    image: "https://placehold.co/600x400/b91c1c/ffffff/png?text=E-commerce+Dashboard",
+                    link: "https://example.com/download/ecommerce-dashboard"
+                },
+                {
+                    title: "Dark Red Login Page",
+                    description: "A stylish login page with dark red and black color scheme.",
+                    image: "https://placehold.co/600x400/7f1d1d/ffffff/png?text=Dark+Red+Login+Page",
+                    link: "https://example.com/download/login-page"
+                },
+                {
+                    title: "Red Accent Buttons",
+                    description: "A collection of buttons with dark red accents and hover effects.",
+                    image: "https://placehold.co/600x400/dc2626/ffffff/png?text=Red+Accent+Buttons",
+                    link: "https://example.com/download/buttons"
+                }
+            ];
+            localStorage.setItem('posts', JSON.stringify(samplePosts));
+        }
+
         function displayPosts() {
             const posts = JSON.parse(localStorage.getItem('posts')) || [];
             const postsContainer = document.getElementById('postsContainer');
             postsContainer.innerHTML = '';
 
-            posts.forEach(post => {
+            posts.forEach((post, index) => {
                 const postElement = document.createElement('div');
-                postElement.className = 'bg-gray-800 p-4 rounded';
+                postElement.className = 'bg-gray-800 p-4 rounded cursor-pointer hover:shadow-lg transition shadow-red-700';
+                postElement.setAttribute('tabindex', '0');
+                postElement.setAttribute('role', 'button');
+                postElement.setAttribute('aria-pressed', 'false');
+                postElement.setAttribute('aria-label', `View details of post titled ${post.title}`);
+
                 postElement.innerHTML = `
-                    <img src="${post.image}" alt="${post.title}" class="w-full h-48 object-cover rounded"/>
-                    <h3 class="text-xl font-bold mt-2">${post.title}</h3>
-                    <p>${post.description}</p>
-                    <a href="${post.link}" class="bg-red-600 text-white p-2 rounded mt-2 inline-block">Download</a>
+                    <img src="${post.image}" alt="Image of ${post.title} with dark red and black theme" class="w-full h-48 object-cover rounded"/>
+                    <h3 class="text-xl font-bold mt-2 text-red-600">${post.title}</h3>
+                    <p class="text-gray-300 mt-1">${post.description}</p>
+                    <a href="${post.link}" class="bg-red-600 text-white p-2 rounded mt-3 inline-block hover:bg-red-700 transition" target="_blank" rel="noopener noreferrer" aria-label="Download ${post.title}">Download</a>
                 `;
+
+                // Open modal on click or Enter key
+                postElement.addEventListener('click', () => openModal(post));
+                postElement.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        openModal(post);
+                    }
+                });
+
                 postsContainer.appendChild(postElement);
             });
         }
 
-        window.onload = displayPosts;
+        function openModal(post) {
+            const modal = document.getElementById('modal');
+            const modalImage = document.getElementById('modalImage');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalDescription = document.getElementById('modalDescription');
+            const modalDownload = document.getElementById('modalDownload');
+
+            modalImage.src = post.image;
+            modalImage.alt = `Full size image of ${post.title} with dark red and black theme`;
+            modalTitle.textContent = post.title;
+            modalDescription.textContent = post.description;
+            modalDownload.href = post.link;
+            modalDownload.setAttribute('aria-label', `Download ${post.title}`);
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            // Trap focus inside modal
+            trapFocus(modal);
+
+            // Close modal on Escape key
+            document.addEventListener('keydown', escKeyListener);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.removeEventListener('keydown', escKeyListener);
+            // Return focus to posts container
+            document.getElementById('postsContainer').focus();
+        }
+
+        function escKeyListener(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        }
+
+        // Trap focus inside modal for accessibility
+        function trapFocus(element) {
+            const focusableElements = element.querySelectorAll('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])');
+            const firstFocusable = focusableElements[0];
+            const lastFocusable = focusableElements[focusableElements.length -1];
+
+            firstFocusable.focus();
+
+            element.addEventListener('keydown', function(e) {
+                if (e.key === 'Tab') {
+                    if (e.shiftKey) { // Shift + Tab
+                        if (document.activeElement === firstFocusable) {
+                            e.preventDefault();
+                            lastFocusable.focus();
+                        }
+                    } else { // Tab
+                        if (document.activeElement === lastFocusable) {
+                            e.preventDefault();
+                            firstFocusable.focus();
+                        }
+                    }
+                }
+            });
+        }
+
+        window.onload = () => {
+            displayPosts();
+
+            // Modal close button and overlay
+            document.getElementById('modalClose').addEventListener('click', closeModal);
+            document.getElementById('modalOverlay').addEventListener('click', closeModal);
+        };
     </script>
 </body>
 </html>
